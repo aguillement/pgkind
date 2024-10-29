@@ -5,6 +5,7 @@ resource "helm_release" "cnpg" {
   chart      = "cloudnative-pg"
 }
 
+
 resource "kubectl_manifest" "cluster" {
   depends_on = [helm_release.cnpg]
 
@@ -14,8 +15,28 @@ kind: Cluster
 metadata:
   name: cluster-pgsql
 spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.4
   instances: 3
   storage:
     size: 1Gi
+  bootstrap:
+    initdb:
+      database: masuperbase
+      owner: jcvd
+YAML
+}
+
+
+resource "kubectl_manifest" "alpine_pod" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine
+spec:
+  containers:
+  - name: alpine
+    image: alpine:latest
+    command: ['sh', '-c', 'apk update && apk add postgresql16-client && tail -f /dev/null']
 YAML
 }
