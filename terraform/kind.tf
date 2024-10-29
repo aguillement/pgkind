@@ -1,3 +1,4 @@
 resource "kind_cluster" "cluster" {
-  name = "postgres"
+  name           = "postgres"
+  wait_for_ready = true
 }

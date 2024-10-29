@@ -1,4 +1,6 @@
 resource "helm_release" "cnpg" {
+  depends_on = [kind_cluster.cluster]
+
   name = "cloudnative-pg"
 
   repository = "https://cloudnative-pg.github.io/charts"
@@ -28,6 +30,8 @@ YAML
 
 
 resource "kubectl_manifest" "alpine_pod" {
+  depends_on = [kind_cluster.cluster]
+
   yaml_body = <<YAML
 apiVersion: v1
 kind: Pod
